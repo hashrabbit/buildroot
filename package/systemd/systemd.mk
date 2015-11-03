@@ -40,6 +40,7 @@ SYSTEMD_CONF_OPTS += \
 	--enable-split-usr \
 	--disable-efi \
 	--disable-gnuefi \
+	--disable-ldconfig \
 	--disable-tests \
 	--disable-dbus \
 	--without-python
@@ -152,17 +153,10 @@ define SYSTEMD_SANITIZE_PATH_IN_UNITS
 		-exec $(SED) 's,$(HOST_DIR),,g' {} \;
 endef
 
-# Disable ldconfig.service, as /sbin/ldconfig is not available when the
-# target is built with a glibc-based toolchain.
-define SYSTEMD_DISABLE_LDCONFIG_SERVICE_HOOK
-	rm -f $(TARGET_DIR)/lib/systemd/system/sysinit.target.wants/ldconfig.service
-endef
-
 SYSTEMD_POST_INSTALL_TARGET_HOOKS += \
 	SYSTEMD_INSTALL_INIT_HOOK \
 	SYSTEMD_INSTALL_MACHINEID_HOOK \
 	SYSTEMD_INSTALL_RESOLVCONF_HOOK \
-	SYSTEMD_DISABLE_LDCONFIG_SERVICE_HOOK \
 	SYSTEMD_SANITIZE_PATH_IN_UNITS
 
 define SYSTEMD_USERS
